@@ -18,14 +18,14 @@ const loader = new THREE.ObjectLoader();
 var shoe = null;
 const shoeUnits = [];
 const textures = [
-    '/texture/S434-A1.png',
-    '/texture/S434-B1.png',
-    '/texture/S434-C1.png',
-    '/texture/S436-A1.png',
-    '/texture/S436-B1.png',
-    '/texture/S436-C1.png'
+    '/src/texture/S434-A1.png',
+    '/src/texture/S434-B1.png',
+    '/src/texture/S434-C1.png',
+    '/src/texture/S436-A1.png',
+    '/src/texture/S436-B1.png',
+    '/src/texture/S436-C1.png'
 ];
-const WhiteTexture = textureLoader.load('/texture/WHITE.png');
+const WhiteTexture = textureLoader.load('/src/texture/WHITE.png');
 const textureItems = textures.map((url) => {
     return {
         url,
@@ -86,7 +86,7 @@ const app = new Vue({
 });
 
 loader.load(
-    './models/nike-air-max-low-poly.json',
+    '/src/models/nike-air-max-low-poly.json',
 
     // onLoad callback
     // Here the loaded data is assumed to be an object

@@ -6,9 +6,9 @@ gulp.task('webserver', function() {
         webserver({
             livereload: true,
             directoryListing: true,
-            path: '/',
+            path: '/src',
             open: 'index.html',
-            fallback: 'index.html'
+            fallback: 'src/index.html'
         })
     );
 });
