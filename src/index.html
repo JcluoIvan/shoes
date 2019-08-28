@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Document</title>
+        <link rel="stylesheet" href="/bootstrap/bootstrap.min.css" />
+        <script src="/threejs/three.107.min.js"></script>
+        <script src="/threejs/LegacyJSONLoader.js"></script>
+        <script src="/threejs/OrbitControls.js"></script>
+        <script src="/vue/vue.min.js"></script>
+        <style>
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                position: relative;
+                overflow: hidden;
+            }
+
+            canvas {
+                width: 100%;
+                height: 100%;
+            }
+            #setting {
+                position: absolute;
+                right: 0;
+                top: 0;
+                background: #fff;
+                border: 1px solid #ccc;
+                height: 100%;
+                width: 600px;
+                overflow-y: auto;
+                padding: 10px;
+            }
+            #setting img {
+                width: 120px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="setting">
+            <div class="row no-gutters">
+                <div class="col">
+                    <h4>部位</h4>
+                    <ul class="list-group " @mouseleave="clearHoverUnit()">
+                        <li
+                            class="list-group-item unit-item"
+                            :class="{active: unit === hoverUnitName || unit === activeUnitName}"
+                            v-for="unit in units"
+                            :key="unit"
+                            @mouseover="onHoverUnit(unit)"
+                            @click="onActiveUnit(unit)"
+                        >
+                            {{ unit }}
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-auto">
+                    <h4>材質</h4>
+                    <ul class="list-group">
+                        <li
+                            class="list-group-item texture-item"
+                            v-for="texture in textures"
+                            :key="texture"
+                            @click="onActiveTexture(texture)"
+                        >
+                            <img :src="texture" />
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script src="/app.js"></script>
+    </body>
+</html>

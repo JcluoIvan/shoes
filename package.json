@@ -1,0 +1,24 @@
+{
+    "name": "shoes",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "gulp webserver",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/JcluoIvan/shoes.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/JcluoIvan/shoes/issues"
+    },
+    "homepage": "https://github.com/JcluoIvan/shoes#readme",
+    "devDependencies": {
+        "gulp": "4.0.2",
+        "gulp-webserver": "0.9.1"
+    }
+}
