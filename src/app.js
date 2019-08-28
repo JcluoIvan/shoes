@@ -191,3 +191,26 @@ initControls();
 animate();
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
+
+function onDocumentMouseDown(event) {
+    event.preventDefault();
+    console.info('click');
+
+    mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
+    mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+
+    var intersects = raycaster.intersectObjects(shoeUnits);
+    console.info(intersects);
+    if (intersects.length > 0) {
+        const first = intersects[0].object;
+        app.activeUnitName = first.name;
+        app.hoverUnitName = first.name;
+        setTimeout(() => (app.hoverUnitName = null), 150);
+
+        // console.info(intersects.map(o => o.object.name));
+        // intersects[0].object.material.color = new THREE.Color(0x9999ff);
+    }
+}
+document.addEventListener('mousedown', onDocumentMouseDown);
