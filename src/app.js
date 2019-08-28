@@ -59,7 +59,7 @@ const app = new Vue({
             if (oldObj) {
                 oldObj.material.color = new THREE.Color(0xffffff);
             }
-        },
+        }
     },
     methods: {
         onActiveUnit(unit) {
@@ -106,6 +106,7 @@ loader.load(
                 //         break;
                 // }
                 // o.material.map = null;
+                o.material = new THREE.MeshPhongMaterial();
                 o.material.map = WhiteTexture;
                 // if (o.name === 'fabric_main_right') {
                 //     window.fum = o;
@@ -117,21 +118,35 @@ loader.load(
         });
         scene.add(obj);
 
-        // const promises = [];
-        // obj.traverse(function(child) {
-        //     const p = (() => {
-        //         if (child.isMesh) {
-        //             return setTexture(child, '/texture/A1.png');
-        //         }
-        //         return Promise.resolve();
-        //     })();
+        const pointLight1 = new THREE.PointLight({
+            color: '#ccffcc',
+            distance: 100 // 光線照亮距離
+        });
+        window.pl1 = pointLight1;
+        pointLight1.intensity = 0.5;
 
-        //     promises.push(p);
-        // });
+        // 設定光源位置
+        pointLight1.position.set(0, 20, -50);
 
-        // Promise.all(promises).then(() => {
-        //     scene.add(obj);
-        // });
+        // 設定光源目標
+        pointLight1.target = obj;
+
+        scene.add(pointLight1);
+
+        const pointLight2 = new THREE.PointLight({
+            color: '#ccffcc',
+            distance: 100 // 光線照亮距離
+        });
+        window.pl2 = pointLight2;
+        pointLight2.intensity = 0.2;
+
+        // 設定光源位置
+        pointLight2.position.set(0, 20, 50);
+
+        // 設定光源目標
+        pointLight2.target = obj;
+
+        scene.add(pointLight2);
     },
 
     // onProgress callback
