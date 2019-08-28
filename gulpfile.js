@@ -7,7 +7,7 @@ gulp.task('webserver', function() {
             livereload: true,
             directoryListing: true,
             path: '/src',
-            open: 'index.html',
+            open: 'src/index.html',
             fallback: 'src/index.html'
         })
     );
