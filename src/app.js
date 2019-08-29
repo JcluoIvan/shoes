@@ -1,20 +1,18 @@
-var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera(
+const scene = new THREE.Scene();
+const canvasPanel = document.querySelector('#canvas-panel');
+const canvasWidth = canvasPanel.getBoundingClientRect().width;
+const canvasHeight = canvasPanel.getBoundingClientRect().height;
+const camera = new THREE.PerspectiveCamera(
     75,
-    window.innerWidth / window.innerHeight,
+    canvasWidth / canvasHeight,
     0.1,
     1000
 );
 scene.background = new THREE.Color(0xffffff);
-camera.position.z = 50;
-
-var renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+camera.position.z = 30;
+const renderer = new THREE.WebGLRenderer();
 const textureLoader = new THREE.TextureLoader();
 
-const whiteBackground = new THREE.Color(0xffffff);
-const loader = new THREE.ObjectLoader();
 var shoe = null;
 const shoeUnits = [];
 const textures = [
@@ -25,6 +23,7 @@ const textures = [
     './texture/S436-B1.png',
     './texture/S436-C1.png'
 ];
+const whiteBackground = new THREE.Color(0xffffff);
 const WhiteTexture = textureLoader.load('./texture/WHITE.png');
 const textureItems = textures.map((url) => {
     return {
@@ -34,20 +33,27 @@ const textureItems = textures.map((url) => {
 });
 
 const app = new Vue({
-    el: '#setting',
+    el: '#app',
     data: {
         units: [],
         hoverUnitName: null,
         activeUnitName: null,
-        textures: [...textures]
+        textures: [...textures],
+        loaded: 0
     },
     computed: {
         activeUnit() {
             const name = this.activeUnitName;
             return shoeUnits.find((o) => o.name === name);
+        },
+        progressStyle() {
+            const loaded = this.loaded;
+            const value = Math.floor(loaded * 100) / 100;
+            return {
+                width: `${value}%`
+            };
         }
     },
-
     watch: {
         hoverUnitName(unit, old) {
             const activeName = this.activeUnitName;
@@ -60,6 +66,11 @@ const app = new Vue({
                 oldObj.material.color = new THREE.Color(0xffffff);
             }
         }
+    },
+    mounted() {
+        console.info('run');
+        renderer.setSize(canvasWidth, canvasHeight);
+        this.$refs.cpanel.appendChild(renderer.domElement);
     },
     methods: {
         onActiveUnit(unit) {
@@ -76,17 +87,18 @@ const app = new Vue({
             const unit = shoeUnits.find((o) => o.name === name);
 
             const findTexture = textureItems.find((o) => o.url === url);
-            if (unit && findTexture) {
-                console.info(unit, findTexture);
+            if (unit && findTexture && findTexture.texture) {
                 unit.material.map = findTexture.texture;
-                console.info(unit === fum);
             }
         }
     }
 });
 
+// const loader = new THREE.ObjectLoader();
+const loader = new THREE.OBJLoader();
 loader.load(
-    './models/nike-air-max-low-poly.json',
+    './models/nike-air-max-low-poly.obj',
+    // './models/nike-air-max-low-poly.json',
 
     // onLoad callback
     // Here the loaded data is assumed to be an object
@@ -95,62 +107,80 @@ loader.load(
         console.warn(obj);
         shoe = obj;
 
+        const removes = [];
         obj.traverse((o) => {
             if (o.isMesh) {
+                if (['Plane', 'Cylinder', 'Cone'].indexOf(o.name) >= 0) {
+                    removes.push(o);
+                    return;
+                }
+
                 shoeUnits.push(o);
                 app.units.push(o.name);
+                o.material = new THREE.MeshLambertMaterial();
                 o.material.color = whiteBackground;
-                // switch (o.name) {
-                //     case 'fabric_liner':
-                //         o.material.color = new THREE.Color(0x00ff00);
-                //         break;
-                // }
-                // o.material.map = null;
-                o.material = new THREE.MeshPhongMaterial();
                 o.material.map = WhiteTexture;
-                // if (o.name === 'fabric_main_right') {
-                //     window.fum = o;
-                //     // o.material.map = textureItems[0].texture;
-                // } else {
-                //     // o.material.map = A1;
-                // }
+
+                switch (o.name) {
+                    case 'swoosh_left':
+                        o.material.side = THREE.BackSide;
+                        break;
+                    case 'fabric_insole':
+                    case 'sole':
+                        /* 修正左側 mark 渲染方向錯誤 */
+                        // o.material.position.z = -0.1;
+                        o.material.side = THREE.DoubleSide;
+                        break;
+                }
             }
         });
+        obj.position.y = -5;
         scene.add(obj);
-
-        const pointLight1 = new THREE.PointLight({
-            color: '#ccffcc',
-            distance: 100 // 光線照亮距離
+        removes.forEach((o) => {
+            obj.remove(o);
         });
-        window.pl1 = pointLight1;
-        pointLight1.intensity = 0.5;
 
-        // 設定光源位置
-        pointLight1.position.set(0, 20, -50);
-
-        // 設定光源目標
-        pointLight1.target = obj;
-
-        scene.add(pointLight1);
-
-        const pointLight2 = new THREE.PointLight({
-            color: '#ccffcc',
-            distance: 100 // 光線照亮距離
+        // 鞋右光源
+        addLight(obj, {
+            color: '#fff',
+            intensity: 0.8,
+            distance: 100,
+            x: 0,
+            y: 10,
+            z: 50
         });
-        window.pl2 = pointLight2;
-        pointLight2.intensity = 0.2;
-
-        // 設定光源位置
-        pointLight2.position.set(0, 20, 50);
-
-        // 設定光源目標
-        pointLight2.target = obj;
-
-        scene.add(pointLight2);
+        // 鞋左光源
+        addLight(obj, {
+            color: '#fff',
+            intensity: 0.8,
+            distance: 100,
+            x: 0,
+            y: 10,
+            z: -50
+        });
+        // 鞋正光源
+        addLight(obj, {
+            color: '#fff',
+            intensity: 0.8,
+            distance: 20,
+            x: 20,
+            y: 20,
+            z: 0
+        });
+        // 鞋背光源
+        addLight(obj, {
+            color: '#fff',
+            intensity: 0.8,
+            distance: 20,
+            x: -30,
+            y: 10,
+            z: 0
+        });
     },
 
     // onProgress callback
     function(xhr) {
+        app.loaded = (xhr.loaded / xhr.total) * 100;
         console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
     },
 
@@ -159,6 +189,23 @@ loader.load(
         console.error('An error happened');
     }
 );
+
+function addLight(target, { x, y, z, color, distance, intensity }) {
+    const pointLight = new THREE.PointLight({
+        color,
+        // 光線照亮距離
+        distance
+    });
+    // 光源強度
+    pointLight.intensity = intensity;
+
+    // 設定光源位置
+    pointLight.position.set(x, y, z);
+
+    // 設定光源目標
+    pointLight.target = target;
+    scene.add(pointLight);
+}
 
 function initControls() {
     controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -180,7 +227,7 @@ function initControls() {
     //设置相机距离原点的最远距离
     controls.maxDistance = 2000;
     //是否开启右键拖拽
-    controls.enablePan = true;
+    controls.enablePan = false;
 }
 
 function animate() {
@@ -194,7 +241,6 @@ var mouse = new THREE.Vector2();
 
 function onDocumentMouseDown(event) {
     event.preventDefault();
-    console.info('click');
 
     mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
     mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
@@ -202,15 +248,11 @@ function onDocumentMouseDown(event) {
     raycaster.setFromCamera(mouse, camera);
 
     var intersects = raycaster.intersectObjects(shoeUnits);
-    console.info(intersects);
     if (intersects.length > 0) {
         const first = intersects[0].object;
         app.activeUnitName = first.name;
         app.hoverUnitName = first.name;
         setTimeout(() => (app.hoverUnitName = null), 150);
-
-        // console.info(intersects.map(o => o.object.name));
-        // intersects[0].object.material.color = new THREE.Color(0x9999ff);
     }
 }
 document.addEventListener('mousedown', onDocumentMouseDown);

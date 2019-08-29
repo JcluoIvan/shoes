@@ -19,6 +19,10 @@
                 position: relative;
                 overflow: hidden;
             }
+            #app {
+                position: relative;
+                height: 600px;
+            }
             #canvas-panel {
                 position: relative;
                 width: 800px;
@@ -46,14 +50,22 @@
                 overflow-y: auto;
                 padding: 10px;
             }
-            #setting img {
+            .group-panel {
+                position: relative;
+                height: 600px;
+            }
+            .list-group {
+                overflow: auto;
+                height: 100%;
+            }
+            img {
                 width: 120px;
             }
         </style>
     </head>
     <body>
         <div id="app" class="row no-gutters">
-            <div id="canvas-panel" class="col-auto">
+            <div id="canvas-panel" class="col-auto" ref="cpanel">
                 <div class="progress" v-show="loaded < 100">
                     <div
                         class="progress-bar progress-bar-striped progress-bar-animated"
@@ -67,7 +79,7 @@
             </div>
             <div class="col">
                 <div class="row no-gutters">
-                    <div class="col">
+                    <div class="col d-flex flex-column group-panel">
                         <h4>部位</h4>
                         <ul class="list-group " @mouseleave="clearHoverUnit()">
                             <li
@@ -82,7 +94,7 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="col-auto">
+                    <div class="col-auto d-flex flex-column group-panel">
                         <h4>材質</h4>
                         <ul class="list-group">
                             <li
@@ -98,6 +110,6 @@
                 </div>
             </div>
         </div>
-        <script src="./app.js"></script>
+        <script src="./app2.js"></script>
     </body>
 </html>
