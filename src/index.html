@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="./bootstrap/bootstrap.min.css" />
         <script src="./threejs/three.107.min.js"></script>
         <script src="./threejs/LegacyJSONLoader.js"></script>
+        <script src="./threejs/OBJLoader.js"></script>
         <script src="./threejs/OrbitControls.js"></script>
         <script src="./vue/vue.min.js"></script>
         <style>
@@ -18,11 +19,22 @@
                 position: relative;
                 overflow: hidden;
             }
-
-            canvas {
-                width: 100%;
-                height: 100%;
+            #canvas-panel {
+                position: relative;
+                width: 800px;
+                height: 600px;
             }
+            #canvas-panel canvas {
+                border: 1px solid #ccc;
+            }
+            .progress {
+                position: absolute;
+                width: 80%;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
             #setting {
                 position: absolute;
                 right: 0;
@@ -40,35 +52,49 @@
         </style>
     </head>
     <body>
-        <div id="setting">
-            <div class="row no-gutters">
-                <div class="col">
-                    <h4>部位</h4>
-                    <ul class="list-group " @mouseleave="clearHoverUnit()">
-                        <li
-                            class="list-group-item unit-item"
-                            :class="{active: unit === hoverUnitName || unit === activeUnitName}"
-                            v-for="unit in units"
-                            :key="unit"
-                            @mouseover="onHoverUnit(unit)"
-                            @click="onActiveUnit(unit)"
-                        >
-                            {{ unit }}
-                        </li>
-                    </ul>
+        <div id="app" class="row no-gutters">
+            <div id="canvas-panel" class="col-auto">
+                <div class="progress" v-show="loaded < 100">
+                    <div
+                        class="progress-bar progress-bar-striped progress-bar-animated"
+                        role="progressbar"
+                        aria-valuenow="75"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        :style="progressStyle"
+                    ></div>
                 </div>
-                <div class="col-auto">
-                    <h4>材質</h4>
-                    <ul class="list-group">
-                        <li
-                            class="list-group-item texture-item"
-                            v-for="texture in textures"
-                            :key="texture"
-                            @click="onActiveTexture(texture)"
-                        >
-                            <img :src="texture" />
-                        </li>
-                    </ul>
+            </div>
+            <div class="col">
+                <div class="row no-gutters">
+                    <div class="col">
+                        <h4>部位</h4>
+                        <ul class="list-group " @mouseleave="clearHoverUnit()">
+                            <li
+                                class="list-group-item unit-item"
+                                :class="{active: unit === hoverUnitName || unit === activeUnitName}"
+                                v-for="unit in units"
+                                :key="unit"
+                                @mouseover="onHoverUnit(unit)"
+                                @click="onActiveUnit(unit)"
+                            >
+                                {{ unit }}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-auto">
+                        <h4>材質</h4>
+                        <ul class="list-group">
+                            <li
+                                class="list-group-item texture-item"
+                                v-for="texture in textures"
+                                :key="texture"
+                                @click="onActiveTexture(texture)"
+                            >
+                                <img :src="texture" />
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
