@@ -10,6 +10,7 @@
         <script src="./threejs/LegacyJSONLoader.js"></script>
         <script src="./threejs/OBJLoader.js"></script>
         <script src="./threejs/OrbitControls.js"></script>
+        <script src="./threejs/GLTFLoader.js"></script>
         <script src="./vue/vue.min.js"></script>
         <style>
             html,
@@ -79,6 +80,19 @@
             </div>
             <div class="col">
                 <div class="row no-gutters">
+                    <div class="col-auto d-flex flex-column group-panel">
+                        <h4>材質</h4>
+                        <ul class="list-group">
+                            <li
+                                class="list-group-item texture-item"
+                                v-for="texture in textures"
+                                :key="texture"
+                                @click="onActiveTexture(texture)"
+                            >
+                                <img :src="texture" />
+                            </li>
+                        </ul>
+                    </div>
                     <div class="col d-flex flex-column group-panel">
                         <h4>部位</h4>
                         <ul class="list-group " @mouseleave="clearHoverUnit()">
@@ -94,22 +108,9 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="col-auto d-flex flex-column group-panel">
-                        <h4>材質</h4>
-                        <ul class="list-group">
-                            <li
-                                class="list-group-item texture-item"
-                                v-for="texture in textures"
-                                :key="texture"
-                                @click="onActiveTexture(texture)"
-                            >
-                                <img :src="texture" />
-                            </li>
-                        </ul>
-                    </div>
                 </div>
             </div>
         </div>
-        <script src="./app2.js"></script>
+        <script src="./app.js"></script>
     </body>
 </html>

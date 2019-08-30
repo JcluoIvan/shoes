@@ -96,7 +96,9 @@ const app = new Vue({
 
 // const loader = new THREE.ObjectLoader();
 const loader = new THREE.OBJLoader();
+// const loader = new THREE.GLTFLoader();
 loader.load(
+    // './models/sh.obj',
     './models/nike-air-max-low-poly.obj',
     // './models/nike-air-max-low-poly.json',
 
@@ -104,7 +106,6 @@ loader.load(
     // Here the loaded data is assumed to be an object
     function(obj) {
         // Add the loaded object to the scene
-        console.warn(obj);
         shoe = obj;
 
         const removes = [];
@@ -127,6 +128,7 @@ loader.load(
                         break;
                     case 'fabric_insole':
                     case 'sole':
+                    case 'sole_sole_Material_Sole':
                         /* 修正左側 mark 渲染方向錯誤 */
                         // o.material.position.z = -0.1;
                         o.material.side = THREE.DoubleSide;
@@ -186,7 +188,7 @@ loader.load(
 
     // onError callback
     function(err) {
-        console.error('An error happened');
+        console.error('An error happened', err);
     }
 );
 
@@ -255,4 +257,4 @@ function onDocumentMouseDown(event) {
         setTimeout(() => (app.hoverUnitName = null), 150);
     }
 }
-document.addEventListener('mousedown', onDocumentMouseDown);
+renderer.domElement.addEventListener('mousedown', onDocumentMouseDown);
